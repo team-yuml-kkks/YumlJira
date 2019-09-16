@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
 
+    'yumljira.apps.projects',
     'yumljira.apps.common',
     'yumljira.apps.users',
 ]
