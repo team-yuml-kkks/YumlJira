@@ -7,8 +7,10 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
+const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
+    mode: 'development',
     target: 'web',
     externals: {},
     context: paths.baseInputDir,
@@ -16,6 +18,8 @@ module.exports = {
         app: './app.js',
         bootstrap: './vendor/bootstrap.js'
     },
+    externals: [nodeExternals()],
+    devtool: 'inline-cheap-module-source-map',
     module: {
         rules: [
             {
