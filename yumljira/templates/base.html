@@ -1,0 +1,30 @@
+{% load render_assets %}
+{% load static %}
+
+{% block html %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>YumlJira</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        {% render_css 'app' %}
+
+        {% block extrastyles %} {% endblock %}
+
+        {% block extrahead %} {% endblock %}
+    </head>
+    <body>
+        {% block content %} {% endblock %}
+
+        {% block preextrajs %} {% endblock %}
+
+        {% render_js 'runtime' %}
+        {% render_js 'app' %}
+
+        {% block extrajs %} {% endblock %}
+    </body>
+</html>
+{% endblock %}
+

@@ -37,16 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
     'crispy_forms',
     'django_extensions',
 
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
-
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
 
     'yumljira.apps.projects',
     'yumljira.apps.common',
@@ -65,10 +65,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'yumljira.urls'
 
+from .auth import *
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,7 +87,6 @@ WSGI_APPLICATION = 'yumljira.wsgi.application'
 
 
 from .db import *
-from .auth import *
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
