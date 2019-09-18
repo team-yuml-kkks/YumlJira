@@ -26,7 +26,7 @@ class TaskFactory(Factory):
 
     project = factory.SubFactory(ProjectFactory)
 
-    priority = fuzzy.FuzzyChoice(PRIORITIES)
+    priority = fuzzy.FuzzyChoice(PRIORITIES_KEYS)
 
     created_by = factory.SubFactory(UserFactory)
     assigned_to = factory.SubFactory(UserFactory)
