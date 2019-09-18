@@ -31,6 +31,13 @@ class Task(TimeStampedModel):
     assigned_to = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL,
         verbose_name=_('Assigned to'), null=True, blank=True, related_name='assigned')
 
+    task_type = models.CharField(_('Task type'), max_length=50,
+        choices=TASK_TYPES, default=SUBTASK)
+
+    story = models.ForeignKey("self", blank=True, null=True,
+        related_name="connected_tasks", on_delete=models.CASCADE)
+    """Describes if task is assigned to story or not."""
+
     def __str__(self):
         return '{}'.format(self.title)
 
