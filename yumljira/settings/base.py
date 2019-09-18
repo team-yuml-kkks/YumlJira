@@ -37,20 +37,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-
     'crispy_forms',
     'django_extensions',
 
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+    'rest_auth.registration',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 
     'yumljira.apps.projects',
     'yumljira.apps.common',
     'yumljira.apps.users',
+
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
