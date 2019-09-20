@@ -114,3 +114,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
 MEDIA_URL = '/uploads/'
 
+DEFAULT_AVATAR = 'assets/images/default_avatar.png'
+
