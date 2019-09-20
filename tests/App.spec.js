@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
-import MyName from '../yumljira/templates/Name.vue';
+import App from '../yumljira/templates/App.vue';
 
-const wrapper = mount(MyName);
+const wrapper = mount(App);
 
 describe('MyName test', () => {
     it('Displays my name when I write it', () => {

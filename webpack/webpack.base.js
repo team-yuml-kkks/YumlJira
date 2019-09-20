@@ -8,14 +8,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const nodeExternals = require('webpack-node-externals')
-
 module.exports = {
     target: 'web',
     externals: [nodeExternals()], //Externalizing dependencies for speed and for test written without browser usage
     context: paths.baseInputDir,
     entry: {
-        app: './app.js',
-        bootstrap: './vendor/bootstrap.js'
+        app: '../../client/app.js',
     },
     devtool: 'inline-cheap-module-source-map',
     module: {
