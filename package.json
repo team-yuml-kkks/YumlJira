@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --config webpack/webpack.local.js --mode development",
     "watch": "webpack --config webpack/webpack.local.js --watch --mode development",
-    "test": "mocha-webpack -w --webpack-config webpack/webpack.local.js --require tests/setup.js tests/**/*.spec.js"
+    "test": "mocha-webpack --webpack-config webpack/webpack.local.js --require tests/setup.js tests/**/*.spec.js",
+    "test-watch": "mocha-webpack -w --webpack-config webpack/webpack.local.js --require tests/setup.js tests/**/*.spec.js" 
   },
   "author": "",
   "license": "ISC",

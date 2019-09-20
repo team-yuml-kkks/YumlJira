@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/team-yuml-kkks/YumlJira.svg?)](https://travis-ci.com/team-yuml-kkks/YumlJira/)
+
 # YUML JIRA
 JIRA by TEAM YUML
 
