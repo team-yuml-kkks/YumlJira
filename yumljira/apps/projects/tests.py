@@ -1,3 +1,4 @@
+import json
 import pytest
 
 from django.urls import reverse
@@ -11,6 +12,7 @@ from rest_framework.test import APIClient
 from yumljira.apps.common.test_utils import user_strategy
 
 from .models import *
+from .serializers import TaskSerializer
 from .test_factories import ProjectFactory, TaskFactory
 
 
@@ -32,16 +34,6 @@ def test_task_str():
 def project_json(project):
     return {
         'name': project.name,
-    }
-
-
-def task_json(task):
-    return {
-        'title': task.title,
-        'description': task.description,
-        'project': task.project.id,
-        'priority': task.priority,
-        'assigned_to': task.assigned_to.id,
     }
 
 
@@ -120,11 +112,7 @@ class TaskTestCase(TestCase):
         tasks_before = Task.objects.count()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
 
-        print(task.__dict__)
-
-        response = self.client.post(self.url, task_json(task), format='json')
-
-        print(response.data)
+        response = self.client.post(self.url, TaskSerializer(task).data, format='json')
 
         assert response.status_code == status.HTTP_201_CREATED
         assert tasks_before + 1 == Task.objects.count()
@@ -166,7 +154,7 @@ class TaskTestCase(TestCase):
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-        response = self.client.post(self.url, task_json(task), format='json')
+        response = self.client.post(self.url, TaskSerializer(task).data, format='json')
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -175,6 +163,48 @@ class TaskTestCase(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
 
         response = self.client.post(self.url)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert tasks_before == Task.objects.count()
+
+    def test_task_create_with_story(self):
+        project = ProjectFactory()
+
+        task_story = TaskFactory(project=project, task_type=STORY)
+        task = TaskFactory(project=project, task_type=SUBTASK, story=task_story)
+
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+
+        response = self.client.post(self.url, TaskSerializer(task).data, format='json')
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+    def test_task_create_with_story_wrong_type(self):
+        project = ProjectFactory()
+
+        task_story = TaskFactory(project=project, task_type=SUBTASK)
+        task = TaskFactory(project=project, task_type=SUBTASK, story=task_story)
+
+        tasks_before = Task.objects.count()
+
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+
+        response = self.client.post(self.url, TaskSerializer(task).data, format='json')
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert tasks_before == Task.objects.count()
+
+    def test_task_story_to_story(self):
+        project = ProjectFactory()
+
+        task_story = TaskFactory(project=project, task_type=STORY)
+        task = TaskFactory(project=project, task_type=STORY, story=task_story)
+
+        tasks_before = Task.objects.count()
+
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+
+        response = self.client.post(self.url, TaskSerializer(task).data, format='json')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert tasks_before == Task.objects.count()

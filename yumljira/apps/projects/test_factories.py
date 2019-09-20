@@ -31,3 +31,7 @@ class TaskFactory(Factory):
     created_by = factory.SubFactory(UserFactory)
     assigned_to = factory.SubFactory(UserFactory)
 
+    task_type = fuzzy.FuzzyChoice(TASK_TYPES_KEYS)
+
+    story = None
+
