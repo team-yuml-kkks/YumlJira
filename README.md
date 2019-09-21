@@ -33,7 +33,12 @@ npm run build / npm run watch
 ### RUNNING TESTS
 ```
 pytest
+npm test
 ```
+
+### GOOGLE LOGIN
+To configure Google Auth you have to add new record to SocialApp model with Google provider
+and insert there project keys.
 
 ### Default avatar credit
 <div>Icon made from <a href="http://www.onlinewebfonts.com/icon">Icon Fonts</a> is licensed by CC BY 3.0</div>

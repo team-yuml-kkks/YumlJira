@@ -59,3 +59,15 @@ LOGOUT_REDIRECT_URL = '/'
 REST_AUTH_REGISTER_SERIALIZERS = {
     "REGISTER_SERIALIZER": "yumljira.apps.users.serializers.CustomRegistrationSerializer",
 }
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
