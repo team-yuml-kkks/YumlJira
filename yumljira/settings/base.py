@@ -52,8 +52,6 @@ INSTALLED_APPS = [
     'yumljira.apps.projects',
     'yumljira.apps.common',
     'yumljira.apps.users',
-
-    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [

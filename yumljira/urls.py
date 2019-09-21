@@ -18,6 +18,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 from django.views.generic import TemplateView
+from rest_framework.renderers import JSONOpenAPIRenderer
 from rest_framework.schemas import get_schema_view
 
 urlpatterns = [
@@ -31,11 +32,12 @@ urlpatterns = [
         title="YumlJira API",
         description="YumlJira API",
         version="0.0.1",
+        renderer_classes=[JSONOpenAPIRenderer]
     ), name='openapi-schema'),
 
     path('docs/', TemplateView.as_view(
-        template_name='swagger-ui.html',
+        template_name='redocs.html',
         extra_context={'schema_url':'openapi-schema'}
-    ), name='swagger-ui'),
+    ), name='redoc'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
