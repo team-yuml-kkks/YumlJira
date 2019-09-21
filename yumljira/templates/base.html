@@ -9,7 +9,6 @@
         <title>YumlJira</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        {% render_css 'bootstrap' %}
         {% render_css 'app' %}
 
         {% block extrastyles %} {% endblock %}
@@ -21,8 +20,9 @@
 
         {% block preextrajs %} {% endblock %}
 
+        <div id="app"></div>
+
         {% render_js 'runtime' %}
-        {% render_js 'bootstrap' %}
         {% render_js 'app' %}
 
         {% block extrajs %} {% endblock %}

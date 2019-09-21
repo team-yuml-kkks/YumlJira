@@ -3,7 +3,7 @@ const path = require('path');
 
 const baseDir       = path.resolve();
 const baseOutputDir = path.join(baseDir, 'yumljira', 'static');
-const baseInputDir  = path.join(baseDir, 'yumljira', 'assets');
+const baseInputDir  = path.join(baseDir, 'client');
 
 module.exports = {
     baseDir:        baseDir,
