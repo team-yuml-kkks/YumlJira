@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 import factory
 from factory import fuzzy
@@ -15,3 +16,6 @@ class UserFactory(Factory):
 
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
+
+    avatar = SimpleUploadedFile(name='test.jpg', content=(b''), content_type='image/jpeg')
+
