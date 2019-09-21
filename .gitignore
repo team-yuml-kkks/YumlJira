@@ -116,3 +116,5 @@ venv.bak/
 # visual studio code settings
 .vscode/
 
+# vim swap files
+*.swp
