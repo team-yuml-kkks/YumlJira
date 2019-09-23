@@ -30,3 +30,13 @@ class TaskViewset(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
+
+class TimeLogViewset(viewsets.ModelViewSet):
+    model = TimeLog
+    serializer_class = TimeLogSerializer
+    permissions_classes = [IsAuthenticated]
+    queryset = TimeLog.objects.all().order_by('id').select_related('task', 'user')
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+

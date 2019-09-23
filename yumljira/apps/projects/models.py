@@ -41,3 +41,15 @@ class Task(TimeStampedModel):
     def __str__(self):
         return '{}'.format(self.title)
 
+
+class TimeLog(TimeStampedModel):
+    task = models.ForeignKey(Task, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="time_logs")
+    """Task is null because we don't want to remove log objects when task is removed."""
+
+    user = models.ForeignKey(get_user_model(), null=False, blank=False, on_delete=models.CASCADE,
+        related_name="time_logs")
+
+    time_logged = models.PositiveIntegerField(null=False, blank=False)
+    date = models.DateField()
+
