@@ -38,6 +38,10 @@ class Task(TimeStampedModel):
         related_name="connected_tasks", on_delete=models.CASCADE)
     """Describes if task is assigned to story or not."""
 
+    @property
+    def time_logged(self):
+        return sum(self.time_logs.all().values_list('time_logged', flat=True))
+
     def __str__(self):
         return '{}'.format(self.title)
 
@@ -51,5 +55,10 @@ class TimeLog(TimeStampedModel):
         related_name="time_logs")
 
     time_logged = models.PositiveIntegerField(null=False, blank=False)
+    """
+    Time logged for task in minutes. User can create more than one
+    `TimeLog` objects for single task.
+    """
+
     date = models.DateField()
 
