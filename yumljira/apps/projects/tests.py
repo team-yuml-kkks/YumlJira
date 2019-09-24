@@ -16,7 +16,7 @@ from rest_framework.test import APIClient
 from yumljira.apps.common.test_utils import user_strategy
 
 from .models import *
-from .serializers import TaskSerializer, TimeLogSerializer
+from .serializers import ProjectSerializer, TaskSerializer, TimeLogSerializer
 from .test_factories import ProjectFactory, TaskFactory, TimeLogFactory
 
 
@@ -105,7 +105,47 @@ class ProjectTestCase(TestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert projects_before == Project.objects.count()
 
-    # TODO: ADD TESTS FOR UPDATE
+    def _detail_url(self, pk):
+        return reverse('projects-detail', kwargs={'pk': pk})
+
+    def test_project_delete(self):
+        project = ProjectFactory()
+
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+        response = self.client.delete(self._detail_url(project.pk))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    def test_project_update_patch(self):
+        project = ProjectFactory()
+        name = Faker().word()
+
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+
+        response = self.client.patch(self._detail_url(project.pk), {'name': name}, format='json')
+
+        assert response.status_code == status.HTTP_200_OK
+
+        project.refresh_from_db()
+
+        assert project.name == name
+
+    def test_project_update_put(self):
+        project = ProjectFactory()
+        name = Faker().word()
+
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+
+        data = ProjectSerializer(project).data
+        data['name'] = name
+
+        response = self.client.put(self._detail_url(project.pk), data, format='json')
+
+        assert response.status_code == status.HTTP_200_OK
+
+        project.refresh_from_db()
+
+        assert project.name == name
 
 
 class TaskTestCase(TestCase):
@@ -215,7 +255,48 @@ class TaskTestCase(TestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert tasks_before == Task.objects.count()
 
-    # TODO: ADD TESTS FOR UPDATE
+    def _detail_url(self, pk):
+        return reverse('tasks-detail', kwargs={'pk': pk})
+
+    def test_task_delete(self):
+        task = TaskFactory()
+
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+        response = self.client.delete(self._detail_url(task.pk))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    def test_task_update_patch(self):
+        task = TaskFactory()
+        title = Faker().word()
+
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+
+        response = self.client.patch(self._detail_url(task.pk), {'title': title}, format='json')
+
+        assert response.status_code == status.HTTP_200_OK
+
+        task.refresh_from_db()
+
+        assert task.title == title
+
+    def test_task_update_put(self):
+        task = TaskFactory()
+        title = Faker().word()
+
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+
+        data = TaskSerializer(task).data
+        data['title'] = title
+
+        response = self.client.put(self._detail_url(task.pk), data, format='json')
+
+        assert response.status_code == status.HTTP_200_OK
+
+        task.refresh_from_db()
+
+        assert task.title == title
+
 
 class TimeLogViewsetTestCase(HTestCase):
     def setUp(self):
@@ -270,7 +351,12 @@ class TimeLogViewsetTestCase(HTestCase):
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
         log.refresh_from_db()
-        # task.refresh_from_db()
+
+        try:
+            task.refresh_from_db()
+            assert False
+        except Task.DoesNotExist:
+            assert True
 
         assert logs_before == TimeLog.objects.count()
         assert not log.task
@@ -336,3 +422,4 @@ def test_task_no_time_logged():
     data = TaskSerializer(TaskFactory()).data
 
     assert data['time_logged'] == 0
+

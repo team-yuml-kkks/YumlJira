@@ -51,7 +51,7 @@ class TimeLogSerializer(serializers.ModelSerializer):
 
     def validate_time_logged(self, time_logged):
         if time_logged <= 0:
-            raise ValidationError({'time_logged': [_('You cannot log 0 minutes.')]})
+            raise ValidationError({'time_logged': [_('You have to log more than 0 minutes')]})
 
         return time_logged
 
