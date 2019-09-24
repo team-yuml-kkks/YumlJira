@@ -6,7 +6,7 @@ from faker import Faker
 from yumljira.apps.users.test_factories import UserFactory
 
 from .choices import *
-from .models import Project, Task
+from .models import *
 
 
 class ProjectFactory(Factory):
@@ -34,4 +34,15 @@ class TaskFactory(Factory):
     task_type = fuzzy.FuzzyChoice(TASK_TYPES_KEYS)
 
     story = None
+
+
+class TimeLogFactory(Factory):
+    class Meta:
+        model = TimeLog
+
+    task = factory.SubFactory(TaskFactory)
+    user = factory.SubFactory(UserFactory)
+
+    time_logged = factory.Faker('pyint')
+    date = factory.Faker('date')
 

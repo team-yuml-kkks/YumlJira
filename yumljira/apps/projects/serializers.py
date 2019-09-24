@@ -14,7 +14,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ('title', 'description', 'project', 'priority',
-            'created_by', 'assigned_to', 'task_type', 'story')
+            'created_by', 'assigned_to', 'task_type', 'story', 'time_logged')
 
     def validate(self, data):
         story = data.get('story', None)
@@ -22,10 +22,10 @@ class TaskSerializer(serializers.ModelSerializer):
 
         if story and task_type:
             if task_type == STORY and story.task_type == STORY:
-                raise ValidationError({'story':([_('Story cannot contain another story.')])})
+                raise ValidationError({'story': [_('Story cannot contain another story.')]})
 
             if not story.task_type == STORY:
-                raise ValidationError({'task_type':([_('Only story may contain subtasks.')])})
+                raise ValidationError({'task_type': [_('Only story may contain subtasks.')]})
 
         return data
 
@@ -36,4 +36,22 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('name', 'created_by', 'tasks')
+
+
+class TimeLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TimeLog
+        fields = ('user', 'task', 'date', 'time_logged')
+
+    def validate_task(self, task):
+        if not task:
+            raise ValidationError({'task': [_('You have to assign issue first.')]})
+
+        return task
+
+    def validate_time_logged(self, time_logged):
+        if time_logged <= 0:
+            raise ValidationError({'time_logged': [_('You have to log more than 0 minutes')]})
+
+        return time_logged
 
