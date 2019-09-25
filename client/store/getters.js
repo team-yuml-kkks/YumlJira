@@ -1,2 +1,4 @@
 // Store all getters used in project
-export default {}
+export default {
+    authorizedGrant: ({ token }) => !!token,
+}
