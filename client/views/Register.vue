@@ -84,17 +84,22 @@ export default {
         },
 
         register() {
+            let formData = new FormData();
+            formData.append('file', this.file);
+
             if (!this.username || !this.password || !this.email) {
                 this.errorMessage = "Fill all fields"
             } else {
                 axios.post('/rest-auth/registration/', {
+                    headers:{'Content-Type': 'multipart/form-data'},
                     username: this.username,
                     email: this.email,
                     password1: this.password,
                     password2: this.password,
-                    avatar: null,
+                    avatar: formData,
                 })
                 .then((response) => {
+                    console.log(reponse);
                     this.setToken(response.data.token);
                 })
                 .catch(function (error) {
