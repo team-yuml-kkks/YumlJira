@@ -13,7 +13,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ('title', 'description', 'project', 'priority',
+        fields = ('pk', 'title', 'description', 'project', 'priority',
             'created_by', 'assigned_to', 'task_type', 'story', 'time_logged')
 
     def validate(self, data):
@@ -35,13 +35,13 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('name', 'created_by', 'tasks')
+        fields = ('pk', 'name', 'created_by', 'tasks')
 
 
 class TimeLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeLog
-        fields = ('user', 'task', 'date', 'time_logged')
+        fields = ('pk', 'user', 'task', 'date', 'time_logged')
 
     def validate_task(self, task):
         if not task:

@@ -1,5 +1,6 @@
 import json
 import pytest
+from urllib import parse
 
 from django.urls import reverse
 from django.test import TestCase
@@ -405,6 +406,55 @@ class TimeLogViewsetTestCase(HTestCase):
         response = self.api_client.post(self.url, TimeLogSerializer(log).data, format='json')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_time_log_list_filter(self):
+        project = ProjectFactory()
+        task = TaskFactory(project=project)
+        task2 = TaskFactory()
+        log = TimeLogFactory(task=task, date='2019-09-24')
+        log2 = TimeLogFactory(date='2019-09-17')
+
+        add_token(self.api_client, self.jwt)
+
+        response = self.api_client.get(self.url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['count'] == 2
+
+        query = parse.urlencode({'task': task.pk})
+
+        response = self.api_client.get(f'{self.url}?{query}')
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['count'] == 1
+        assert response.data['results'][0]['pk'] == log.pk
+
+        query = parse.urlencode({'task__project': task.project.pk})
+        response = self.api_client.get(f'{self.url}?{query}')
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['count'] == 1
+        assert response.data['results'][0]['pk'] == log.pk
+
+        query = parse.urlencode({'date_after': '2019-09-18'})
+        response = self.api_client.get(f'{self.url}?{query}')
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['count'] == 1
+        assert response.data['results'][0]['pk'] == log.pk
+
+        query = parse.urlencode({'date_before': '2019-09-23'})
+        response = self.api_client.get(f'{self.url}?{query}')
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['count'] == 1
+        assert response.data['results'][0]['pk'] == log2.pk
+
+        query = parse.urlencode({'date_after': '2019-09-18', 'date_before': '2019-09-23'})
+        response = self.api_client.get(f'{self.url}?{query}')
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['count'] == 0
 
 
 @given(integers(min_value=1, max_value=200), integers(min_value=1, max_value=200))

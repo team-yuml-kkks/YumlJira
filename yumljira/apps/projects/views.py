@@ -1,9 +1,12 @@
 from django.http import Http404
 from django.shortcuts import render
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 
+from .filters import TimeLogFilter
 from .models import *
 from .serializers import *
 
@@ -39,6 +42,8 @@ class TimeLogViewset(viewsets.ModelViewSet):
     serializer_class = TimeLogSerializer
     permission_classes = [IsAuthenticated]
     queryset = TimeLog.objects.all().order_by('id').select_related('task', 'user')
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TimeLogFilter
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
