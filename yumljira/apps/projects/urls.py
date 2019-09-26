@@ -10,5 +10,8 @@ router.register(r'timelogs', views.TimeLogViewset, basename='timelogs')
 
 urlpatterns = [
     path('', views.base_view, name='base_view'),
+    path('register', views.base_view, name='base_view'),
+    path('login', views.base_view, name='base_view'),
+    path('project-list', views.base_view, name='base_view'),
 ] + router.urls
 
