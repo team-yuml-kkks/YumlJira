@@ -35,15 +35,14 @@
         </div>
         <div class="columns is-centered">
             <div class="column is-two-fifths">
-                <button class="button is-primary is-pulled-right" @click="login">Login</button>
+                <button class="button is-primary is-pulled-right" @click="setUserData">Login</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios';
-import { mapMutations, mapState, mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: 'Register',
@@ -61,26 +60,18 @@ export default {
     },
 
     methods: {
-        ...mapMutations({
-            setToken: 'setToken',
+        ...mapActions({
+            login: 'login',
         }),
 
-        login() {
-            if (!this.username || !this.password) {
-                this.errorMessage = "Fill all fields"
-            } else {
-                axios.post('/rest-auth/login/', {
-                    username: this.username,
-                    email: this.email,
-                    password: this.password,
-                })
-                .then((response) => {
-                    this.setToken(response.data.token);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+        setUserData() {
+            const userData = {
+                'username': this.username,
+                'password': this.password,
+                'email': this.email,
             }
+
+            this.login(userData);
         },
     },
 
