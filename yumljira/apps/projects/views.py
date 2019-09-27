@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 
-from .filters import TimeLogFilter
+from .filters import *
 from .models import *
 from .serializers import *
 
@@ -30,7 +30,7 @@ class TaskViewset(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated]
     queryset = Task.objects.all().order_by('id') \
-        .select_related('project') \
+        .select_related('project', 'story') \
         .prefetch_related('time_logs')
 
     def perform_create(self, serializer):
@@ -52,6 +52,26 @@ class TimeLogViewset(viewsets.ModelViewSet):
         obj = super().get_object()
 
         if not obj.user == self.request.user:
+            raise Http404
+
+        return obj
+
+
+class CommentViewset(viewsets.ModelViewSet):
+    model = Comment
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Comment.objects.all().select_related('task', 'owner')
+    filter_backends = [DjangoFilterBackend]
+    fiterset_class = CommentFilter
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def get_object(self):
+        obj = super().get_object()
+
+        if not obj.owner == self.request.user:
             raise Http404
 
         return obj

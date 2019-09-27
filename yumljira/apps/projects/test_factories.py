@@ -46,3 +46,13 @@ class TimeLogFactory(Factory):
     time_logged = factory.Faker('pyint')
     date = factory.Faker('date')
 
+
+class CommentFactory(Factory):
+    class Meta:
+        model = Comment
+
+    task = factory.SubFactory(TaskFactory)
+    owner = factory.SubFactory(UserFactory)
+
+    content = factory.Faker('paragraph')
+

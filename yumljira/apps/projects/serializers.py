@@ -9,14 +9,23 @@ from .choices import *
 from .models import *
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('pk', 'content', 'owner', 'task')
+
+
 class TaskSerializer(serializers.ModelSerializer):
     story = serializers.PrimaryKeyRelatedField(queryset=Task.objects.all(),
         required=False, allow_null=True)
 
+    comments = CommentSerializer(read_only=True, many=True)
+
     class Meta:
         model = Task
         fields = ('pk', 'title', 'description', 'project', 'priority',
-            'created_by', 'assigned_to', 'task_type', 'story', 'time_logged')
+            'created_by', 'assigned_to', 'task_type', 'story', 'time_logged',
+            'comments')
 
     def validate(self, data):
         story = data.get('story', None)
