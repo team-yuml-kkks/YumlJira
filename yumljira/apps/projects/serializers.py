@@ -127,4 +127,3 @@ class TimeLogSerializer(serializers.ModelSerializer):
 
     def _get_value(self, value):
         return max(Decimal(value), 0)
-

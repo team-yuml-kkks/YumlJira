@@ -75,4 +75,3 @@ class CommentViewset(viewsets.ModelViewSet):
             raise Http404
 
         return obj
-
