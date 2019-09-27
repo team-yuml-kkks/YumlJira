@@ -62,3 +62,10 @@ class TimeLog(TimeStampedModel):
 
     date = models.DateField()
 
+
+class Comment(TimeStampedModel):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="comments")
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    content = models.TextField()
+
