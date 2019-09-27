@@ -3,16 +3,6 @@
         <div class="columns is-centered">
             <div class="column is-two-fifths register-form">
                 <h1>Login</h1>
-                <p class="help is-danger is-size-6"><b>{{ errorMessage }}</b></p>
-                <div class="field">
-                    <label class="label">Email</label>
-                    <div class="control">
-                        <input 
-                            class="input"
-                            type="email"
-                            v-model="email">
-                    </div>
-                </div>
                 <div class="field">
                     <label class="label">Username</label>
                     <div class="control">
@@ -35,14 +25,15 @@
         </div>
         <div class="columns is-centered">
             <div class="column is-two-fifths">
-                <button class="button is-primary is-pulled-right" @click="setUserData">Login</button>
+                <button class="button is-primary is-pulled-right"
+                    @click="userLogin({ username, password })">Login</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     name: 'Register',
@@ -50,8 +41,6 @@ export default {
         return {
             password: undefined,
             username: undefined,
-            email: undefined,
-            errorMessage: undefined,
         };
     },
 
@@ -60,19 +49,7 @@ export default {
     },
 
     methods: {
-        ...mapActions({
-            login: 'login',
-        }),
-
-        setUserData() {
-            const userData = {
-                'username': this.username,
-                'password': this.password,
-                'email': this.email,
-            }
-
-            this.login(userData);
-        },
+        ...mapActions(['userLogin']),
     },
 
     watch: {
