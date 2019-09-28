@@ -15,6 +15,7 @@ class ProjectFactory(Factory):
 
     name = factory.Faker('word')
     created_by = factory.SubFactory(UserFactory)
+    key = factory.Faker('word')
 
 
 class TaskFactory(Factory):

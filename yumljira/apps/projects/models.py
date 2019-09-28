@@ -11,6 +11,7 @@ class Project(TimeStampedModel):
     name = models.CharField(_('Project name'), max_length=255)
     created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL,
         verbose_name=_('Created by'), null=True, blank=False)
+    key = models.CharField(_('Project key'), max_length=30)
 
     def __str__(self):
         return '{}'.format(self.name)

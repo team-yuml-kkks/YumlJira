@@ -42,11 +42,9 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    tasks = TaskSerializer(many=True, read_only=True)
-
     class Meta:
         model = Project
-        fields = ('pk', 'name', 'created_by', 'tasks')
+        fields = ('pk', 'name', 'created_by', 'key')
 
 
 class TimeLogSerializer(serializers.ModelSerializer):
