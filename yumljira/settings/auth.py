@@ -51,7 +51,7 @@ REST_USE_JWT = True
 
 REST_SESSION_LOGIN = False
 
-LOGIN_URL = '/login'
+LOGIN_URL = '/account/login'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
