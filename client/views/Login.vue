@@ -3,6 +3,9 @@
         <div class="columns is-centered">
             <div class="column is-two-fifths register-form">
                 <h1>Login</h1>
+                <div v-if="getFormLoginErrors.non_field_errors !== 'undefined'">
+                    {{ getFormLoginErrors.non_field_errors }}
+                </div>
                 <div class="field">
                     <label class="label">Username</label>
                     <div class="control">
@@ -20,6 +23,9 @@
                             type="password"
                             v-model="password">
                     </div>
+                    <div v-if="getFormLoginErrors.password !== 'undefined'">
+                        {{ getFormLoginErrors.password }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,10 +39,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
-    name: 'Register',
+    name: 'Login',
     data() {
         return {
             password: undefined,
@@ -45,7 +51,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['authorizedGrant']),
+        ...mapGetters(['authorizedGrant', 'getFormLoginErrors']),
     },
 
     methods: {

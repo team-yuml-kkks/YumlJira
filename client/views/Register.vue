@@ -11,6 +11,9 @@
                             type="email"
                             v-model="email">
                     </div>
+                    <div v-if="getFormRegisterErrors.email !== 'undefined'">
+                        {{ getFormRegisterErrors.email }}
+                    </div>
                 </div>
                 <div class="field">
                     <label class="label">Password</label>
@@ -20,14 +23,8 @@
                             type="password"
                             v-model="password">
                     </div>
-                </div>
-                <div class="field">
-                    <label class="label">Repeat password</label>
-                    <div class="control">
-                        <input 
-                            class="input"
-                            type="password"
-                            v-model="password_repeat">
+                    <div v-if="getFormRegisterErrors.password !== 'undefined'">
+                        {{ getFormRegisterErrors.password }}
                     </div>
                 </div>
             <div class="field">
@@ -37,6 +34,9 @@
                         class="input"
                         type="text"
                         v-model="username">
+                </div>
+                <div v-if="getFormRegisterErrors.password !== 'undefined'">
+                    {{ getFormRegisterErrors.username }}
                 </div>
             </div>
             <div class="file">
@@ -53,6 +53,9 @@
                     </span>
                 </label>
             </div>
+            <div v-if="getFormRegisterErrors.avatar !== 'undefined'">
+                {{ getFormRegisterErrors.avatar }}
+            </div>
             </div>
         </div>
         <div class="columns is-centered">
@@ -65,7 +68,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapGetters } from 'vuex';
+import { mapActions, mapMutations, mapGetters, mapState } from 'vuex';
 
 export default {
     name: 'Register',
@@ -73,14 +76,14 @@ export default {
         return {
             email: undefined,
             password: undefined,
-            password_repeat: undefined,
             username: undefined,
             file: null,
         };
     },
 
     computed: {
-        ...mapGetters(['authorizedGrant']),
+        ...mapGetters(['authorizedGrant','getFormRegisterErrors']),
+        ...mapState(['error_msg']),
     },
 
     methods: {
