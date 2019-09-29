@@ -16,8 +16,8 @@ export default {
 
     logout(state) {
         state.token = null;
-        state.pk = undefined;
-        state.email = undefined;
-        state.username = undefined;
+        state.pk = null;
+        state.email = null;
+        state.username = null;
     }
 };
