@@ -25,11 +25,6 @@ def test_project_str():
 
     assert str(project) == project.name
 
-def project_json(project):
-    return {
-        'name': project.name,
-    }
-
 
 class ProjectTestCase(TestCase):
     def setUp(self):
@@ -42,7 +37,7 @@ class ProjectTestCase(TestCase):
         projects_before = Project.objects.count()
         add_token(self.client, self.jwt)
 
-        response = self.client.post(self.url, project_json(project), format='json')
+        response = self.client.post(self.url, ProjectSerializer(project).data, format='json')
 
         assert response.status_code == status.HTTP_201_CREATED
         assert projects_before + 1 == Project.objects.count()
@@ -64,11 +59,12 @@ class ProjectTestCase(TestCase):
         data = response.data['results']
 
         assert 'name' in data[0]
-        assert 'tasks' in data[0]
         assert 'created_by' in data[0]
+        assert 'key' in data[0]
 
         assert data[0]['name'] == project.name
         assert data[0]['created_by'] == self.user.id
+        assert data[0]['key'] == project.key
 
     def test_no_credentials(self):
         project = ProjectFactory()
@@ -78,7 +74,7 @@ class ProjectTestCase(TestCase):
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-        response = self.client.post(self.url, project_json(project), format='json')
+        response = self.client.post(self.url, ProjectSerializer(project).data, format='json')
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -132,3 +128,4 @@ class ProjectTestCase(TestCase):
         project.refresh_from_db()
 
         assert project.name == name
+
