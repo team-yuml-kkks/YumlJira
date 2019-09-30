@@ -19,7 +19,7 @@ const router = new Router({
             beforeEnter: async (to, from, next) => {
                 await Vue.nextTick();
                 const { getters: { authorizedGrant } } = store;
-                console.log(authorizedGrant);
+
                 if (authorizedGrant) {
                     next({ name: 'project-list', replace: true });
                 } else {
@@ -34,7 +34,7 @@ const router = new Router({
             beforeEnter: async (to, from, next) => {
                 await Vue.nextTick();
                 const { getters: { authorizedGrant } } = store;
-                console.log(authorizedGrant);
+
                 if (authorizedGrant) {
                     next({ name: 'project-list', replace: true });
                 } else {
