@@ -32,6 +32,8 @@ class TaskViewset(viewsets.ModelViewSet):
     queryset = Task.objects.all().order_by('id') \
         .select_related('project', 'story') \
         .prefetch_related('time_logs')
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TaskFilter
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -75,3 +77,4 @@ class CommentViewset(viewsets.ModelViewSet):
             raise Http404
 
         return obj
+
