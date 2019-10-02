@@ -60,3 +60,12 @@ const router = new Router({
     ],
 });
 export default router;
+
+router.beforeEach((to, from, next) => {
+    const { state: { error_msg } } = store;
+    if (error_msg.length != 0) {
+        store.commit('clearErrors');
+    }
+
+    next();
+})

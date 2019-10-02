@@ -4,4 +4,6 @@ export default {
     username: undefined,
     email: undefined,
     pk: undefined,
+
+    error_msg: {},
 }

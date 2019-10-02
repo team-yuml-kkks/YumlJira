@@ -19,5 +19,13 @@ export default {
         state.pk = undefined;
         state.email = undefined;
         state.username = undefined;
+    },
+
+    setError(state, { data }) {
+        state.error_msg = data;
+    },
+
+    clearErrors(state) {
+        state.error_msg = {};
     }
-};
+}; 
