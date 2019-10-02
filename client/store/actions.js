@@ -25,7 +25,7 @@ export default {
     },
 
     userRegister({commit}, payload) {
-        const { email, password, password_repeat, username, file } = payload
+        const { email, password, username, file } = payload
 
         let formData = new FormData();
 

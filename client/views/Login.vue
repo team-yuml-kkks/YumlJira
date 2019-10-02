@@ -3,8 +3,8 @@
         <div class="columns is-centered">
             <div class="column is-two-fifths register-form">
                 <h1>Login</h1>
-                <div v-if="getFormLoginErrors.non_field_errors !== 'undefined'">
-                    {{ getFormLoginErrors.non_field_errors }}
+                <div v-if="getFormLoginErrors.general !== 'undefined'">
+                    {{ getFormLoginErrors.general }}
                 </div>
                 <div class="field">
                     <label class="label">Username</label>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     name: 'Login',

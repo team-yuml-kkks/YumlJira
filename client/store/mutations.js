@@ -24,4 +24,8 @@ export default {
     setError(state, { data }) {
         state.error_msg = data;
     },
+
+    clearErrors(state) {
+        state.error_msg = {};
+    }
 }; 
