@@ -16,6 +16,17 @@ class ProjectFactory(Factory):
     name = factory.Faker('word')
     created_by = factory.SubFactory(UserFactory)
     key = factory.Faker('word')
+    board_type = fuzzy.FuzzyChoice(BOARD_TYPE_KEYS)
+
+
+class ColumnFactory(Factory):
+    class Meta:
+        model = Column
+
+    project = factory.SubFactory(ProjectFactory)
+    title = factory.Faker('word')
+    number_in_board = factory.Faker('pyint')
+    should_show = factory.Faker('pybool')
 
 
 class TaskFactory(Factory):
@@ -33,8 +44,9 @@ class TaskFactory(Factory):
     assigned_to = factory.SubFactory(UserFactory)
 
     task_type = fuzzy.FuzzyChoice(TASK_TYPES_KEYS)
-
     story = None
+
+    column = factory.Faker('pyint')
 
 
 class TimeLogFactory(Factory):

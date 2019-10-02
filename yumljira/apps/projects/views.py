@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 
+from .choices import KANBAN
 from .filters import *
 from .models import *
 from .serializers import *
@@ -19,10 +20,17 @@ class ProjectViewset(viewsets.ModelViewSet):
     model = Project
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Project.objects.all().order_by('id').prefetch_related('tasks')
+    queryset = Project.objects.all().order_by('id') \
+        .prefetch_related('tasks', 'sprints')
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        sprint_name = serializer.validated_data.pop('sprint_name', None)
+        project = serializer.save(created_by=self.request.user)
+
+        if project.board_type == KANBAN:
+            project.create_kanban_board()
+        else:
+            project.create_scrum_board(sprint_name)
 
 
 class TaskViewset(viewsets.ModelViewSet):
