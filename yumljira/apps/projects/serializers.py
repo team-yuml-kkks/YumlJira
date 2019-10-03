@@ -31,9 +31,25 @@ class TaskSerializer(serializers.ModelSerializer):
             'modified': {'read_only': True},
         }
 
+    def validate_column(self, number):
+        if self.instance:
+            project = self.instance.project
+
+            column = Column.objects \
+                .filter(project=project, number_in_board=number) \
+                .first()
+
+            if not column:
+                raise ValidationError({'column': [_('Column does not exist.')]})
+
+        return number
+
+
     def validate(self, data):
         story = data.get('story', None)
         task_type = data.get('task_type', None)
+        column_number = data.get('column', None)
+        project = data.get('project', None)
 
         if story and task_type:
             if task_type == STORY and story.task_type == STORY:
@@ -41,6 +57,14 @@ class TaskSerializer(serializers.ModelSerializer):
 
             if not story.task_type == STORY:
                 raise ValidationError({'task_type': [_('Only story may contain subtasks.')]})
+
+        if project and column_number:
+            column = Column.objects \
+                .filter(project=project, number_in_board=column_number) \
+                .first()
+
+            if not column:
+                raise ValidationError({'column': [_('Column does not exist.')]})
 
         return data
 
