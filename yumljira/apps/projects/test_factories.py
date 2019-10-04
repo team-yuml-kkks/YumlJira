@@ -27,6 +27,7 @@ class ColumnFactory(Factory):
     title = factory.Faker('word')
     number_in_board = factory.Faker('pyint')
     should_show = factory.Faker('pybool')
+    removable = factory.Faker('pybool')
 
 
 class TaskFactory(Factory):

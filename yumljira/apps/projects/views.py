@@ -3,8 +3,9 @@ from django.shortcuts import render
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
+from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from .choices import KANBAN
 from .filters import *
@@ -20,7 +21,8 @@ class ProjectViewset(viewsets.ModelViewSet):
     model = Project
     permission_classes = [IsAuthenticated]
     queryset = Project.objects.all().order_by('id') \
-        .prefetch_related('sprints', 'columns', 'columns__tasks')
+        .prefetch_related('sprints', 'columns', 'columns__tasks') \
+        .prefetch_related('columns__tasks__comments')
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -87,6 +89,40 @@ class CommentViewset(viewsets.ModelViewSet):
         obj = super().get_object()
 
         if not obj.owner == self.request.user:
+            raise Http404
+
+        return obj
+
+
+class ColumnCreateUpdate(viewsets.ViewSet, CreateAPIView, DestroyAPIView, UpdateAPIView):
+    serializer_class = ColumnSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Column.objects.all().order_by('number_in_board').select_related('project')
+
+    def perform_create(self, serializer):
+        number = serializer.validated_data['number_in_board']
+        project = serializer.validated_data['project']
+        Column.update_board_numbers(number, self.action, project)
+
+        super().perform_create(serializer)
+
+    def perform_update(self, serializer):
+        number = serializer.validated_data.get('number_in_board', None)
+
+        if number:
+            Column.update_board_numbers_exist(number, self.get_object())
+
+        super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        Column.update_board_numbers(instance.number_in_board, self.action, instance.project)
+
+        super().perform_destroy(instance)
+
+    def get_object(self):
+        obj = super().get_object()
+
+        if self.action == 'destroy' and not obj.removable:
             raise Http404
 
         return obj

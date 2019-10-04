@@ -26,17 +26,6 @@ from ..test_factories import ColumnFactory, ProjectFactory, TaskFactory
 pytestmark = pytest.mark.django_db
 
 
-def test_column_unique_together():
-    project = ProjectFactory()
-    column = ColumnFactory(project=project, number_in_board=1)
-
-    try:
-        column2 = ColumnFactory(project=project, number_in_board=1)
-        assert False
-    except IntegrityError:
-        assert True
-
-
 class KanbanBoardTestCase(TestCase):
     def setUp(self):
         self.user, self.jwt = user_strategy()
