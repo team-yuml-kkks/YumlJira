@@ -10,6 +10,7 @@ import ProjectList from './views/ProjectList.vue';
 Vue.use(Router);
 
 const router = new Router({
+    mode: 'history',
     routes: [
         { path: '/', name: 'home', component: MainPage, },
         {
