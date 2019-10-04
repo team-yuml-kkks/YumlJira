@@ -9,10 +9,19 @@ from .choices import *
 from .models import *
 
 
+class ColumnSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Column
+        fields = ('pk', 'title', 'number_in_board', 'should_show', 'project')
+        extra_kwargs = {
+            'project': {'write_only': True}
+        }
+
+
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ('pk', 'content', 'owner', 'task')
+        fields = ('pk', 'content', 'owner', 'task', 'created', 'modified')
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -43,7 +52,6 @@ class TaskSerializer(serializers.ModelSerializer):
                 raise ValidationError({'column': [_('Column does not exist.')]})
 
         return number
-
 
     def validate(self, data):
         story = data.get('story', None)
@@ -76,13 +84,12 @@ class SprintSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    sprints = SprintSerializer(many=True, read_only=True)
     sprint_name = serializers.CharField(max_length=200, write_only=True,
         allow_null=True, required=False)
 
     class Meta:
         model = Project
-        fields = ('pk', 'name', 'created_by', 'key', 'board_type', 'sprints', 'sprint_name')
+        fields = ('pk', 'name', 'created_by', 'key', 'board_type', 'sprint_name')
 
     def validate(self, data):
         sprint_name = data.get('sprint_name', None)
@@ -95,6 +102,17 @@ class ProjectSerializer(serializers.ModelSerializer):
             raise ValidationError({'sprint_name': [_('Sprint name is required for scrum board.')]})
 
         return data
+
+
+class ProjectDetailSerializer(ProjectSerializer):
+    sprints = SprintSerializer(many=True, read_only=True)
+    columns = ColumnSerializer(many=True, read_only=True)
+    tasks = TaskSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Project
+        fields = ('pk', 'name', 'created_by', 'key', 'board_type',
+            'sprint_name', 'sprints', 'columns', 'tasks')
 
 
 class TimeLogSerializer(serializers.ModelSerializer):
@@ -175,10 +193,4 @@ class TimeLogSerializer(serializers.ModelSerializer):
 
     def _get_value(self, value):
         return max(Decimal(value), 0)
-
-
-class ColumnSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Column
-        fields = ('pk', 'title', 'number_in_board', 'should_show', 'project')
 

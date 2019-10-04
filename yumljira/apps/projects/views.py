@@ -18,10 +18,15 @@ def base_view(request):
 
 class ProjectViewset(viewsets.ModelViewSet):
     model = Project
-    serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
     queryset = Project.objects.all().order_by('id') \
         .prefetch_related('tasks', 'sprints')
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ProjectDetailSerializer
+        else:
+            return ProjectSerializer
 
     def perform_create(self, serializer):
         sprint_name = serializer.validated_data.pop('sprint_name', None)
