@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from .models import Comment, TimeLog
+from .models import Comment, Task, TimeLog
 
 
 class TimeLogFilter(filters.FilterSet):
@@ -9,7 +9,7 @@ class TimeLogFilter(filters.FilterSet):
 
     class Meta:
         model = TimeLog
-        fields = ['task', 'user', 'task__project', 'date_after', 'date_before']
+        fields = ['user', 'date_after', 'date_before', 'task__column__project', 'task']
 
 
 class CommentFilter(filters.FilterSet):
@@ -19,4 +19,10 @@ class CommentFilter(filters.FilterSet):
     class Meta:
         model = Comment
         fields = ['task', 'owner', 'date_after', 'date_before']
+
+
+class TaskFilter(filters.FilterSet):
+    class Meta:
+        model = Task
+        fields = ['assigned_to', 'story', 'priority', 'task_type', 'column', 'column__project']
 

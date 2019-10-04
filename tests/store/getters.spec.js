@@ -8,7 +8,7 @@ describe('Store getters', () => {
     describe('authorizedGrant', () => {
         const { authorizedGrant } = getters;
 
-        it('auth on default is false', () => {
+        it('is false when token is null on initialization store', () => {
             expect(authorizedGrant(storeState)).to.be.false;
         });
 
@@ -21,7 +21,7 @@ describe('Store getters', () => {
             ));
         });
 
-        it('is true when token are set', () => {
+        it('is true when token is set', () => {
             fc.assert(fc.property(
                 fc.string(1, 700),
                 (token) => {

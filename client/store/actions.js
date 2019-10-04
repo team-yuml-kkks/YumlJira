@@ -14,8 +14,13 @@ export default {
 
             commit('setUser', { data });
         })
-        .catch(function (error) {
-            console.log(error);
+        .catch((error) => {
+            
+            const { response: {
+                data
+            } } = error;
+
+            commit('setError', { data })
         });
     },
 
@@ -42,8 +47,12 @@ export default {
             const { data = {} } = response;
             commit('setUser', { data });
         })
-        .catch(function (error) {
-            console.log(error.response);
+        .catch((error) => {
+            const { response: {
+                data
+            } } = error;
+
+            commit('setError', { data })
         });
     },
 
@@ -52,7 +61,11 @@ export default {
         }).then((response) => {
             commit('logout');
         }).catch((error) => {
-            console.log(error);
+            const { response: {
+                data
+            } } = error;
+
+            commit('setError', { data })
         });
     },
 }

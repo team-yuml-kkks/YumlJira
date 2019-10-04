@@ -16,9 +16,10 @@ from yumljira.apps.common.test_utils import user_strategy
 
 from .utils import add_token
 
+from ..choices import KANBAN
 from ..models import Task, TimeLog
 from ..serializers import TaskSerializer, TimeLogSerializer
-from ..test_factories import ProjectFactory, TaskFactory, TimeLogFactory
+from ..test_factories import ColumnFactory, ProjectFactory, TaskFactory, TimeLogFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -140,8 +141,8 @@ class TimeLogViewsetTestCase(HTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_time_log_list_filter(self):
-        project = ProjectFactory()
-        task = TaskFactory(project=project)
+        column = ColumnFactory()
+        task = TaskFactory(column=column)
         task2 = TaskFactory()
         log = TimeLogFactory(task=task, date='2019-09-24')
         log2 = TimeLogFactory(date='2019-09-17')
@@ -161,7 +162,7 @@ class TimeLogViewsetTestCase(HTestCase):
         assert response.data['count'] == 1
         assert response.data['results'][0]['pk'] == log.pk
 
-        query = parse.urlencode({'task__project': task.project.pk})
+        query = parse.urlencode({'task__column__project': task.column.project.pk})
         response = self.api_client.get(f'{self.url}?{query}')
 
         assert response.status_code == status.HTTP_200_OK

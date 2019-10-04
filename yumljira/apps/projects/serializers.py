@@ -12,7 +12,7 @@ from .models import *
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ('pk', 'content', 'owner', 'task')
+        fields = ('pk', 'content', 'owner', 'task', 'created', 'modified')
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -23,9 +23,13 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ('pk', 'title', 'description', 'project', 'priority',
+        fields = ('pk', 'title', 'description', 'priority',
             'created_by', 'assigned_to', 'task_type', 'story', 'time_logged',
-            'comments')
+            'comments', 'created', 'modified', 'column')
+        extra_kwargs = {
+            'created': {'read_only': True},
+            'modified': {'read_only': True},
+        }
 
     def validate(self, data):
         story = data.get('story', None)
@@ -41,10 +45,52 @@ class TaskSerializer(serializers.ModelSerializer):
         return data
 
 
+class ColumnSerializer(serializers.ModelSerializer):
+    tasks = TaskSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Column
+        fields = ('pk', 'title', 'number_in_board', 'should_show', 'project', 'tasks')
+        extra_kwargs = {
+            'project': {'write_only': True}
+        }
+
+
+class SprintSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sprint
+        fields = ('pk', 'name', 'is_closed', 'created')
+
+
 class ProjectSerializer(serializers.ModelSerializer):
+    sprint_name = serializers.CharField(max_length=200, write_only=True,
+        allow_null=True, required=False)
+
     class Meta:
         model = Project
-        fields = ('pk', 'name', 'created_by', 'key')
+        fields = ('pk', 'name', 'created_by', 'key', 'board_type', 'sprint_name')
+
+    def validate(self, data):
+        sprint_name = data.get('sprint_name', None)
+        board_type = data.get('board_type', None)
+
+        if board_type == KANBAN and sprint_name:
+            raise ValidationError({'sprint_name': [_('Kanban board do not contain sprints')]})
+
+        if board_type == SCRUM and not sprint_name:
+            raise ValidationError({'sprint_name': [_('Sprint name is required for scrum board.')]})
+
+        return data
+
+
+class ProjectDetailSerializer(ProjectSerializer):
+    sprints = SprintSerializer(many=True, read_only=True)
+    columns = ColumnSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Project
+        fields = ('pk', 'name', 'created_by', 'key', 'board_type',
+            'sprint_name', 'sprints', 'columns')
 
 
 class TimeLogSerializer(serializers.ModelSerializer):
@@ -125,3 +171,4 @@ class TimeLogSerializer(serializers.ModelSerializer):
 
     def _get_value(self, value):
         return max(Decimal(value), 0)
+

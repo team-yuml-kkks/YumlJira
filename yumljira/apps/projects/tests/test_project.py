@@ -1,7 +1,7 @@
 import pytest
 
-from django.urls import reverse
 from django.test import TestCase
+from django.urls import reverse
 
 from faker import Faker
 
@@ -12,6 +12,7 @@ from yumljira.apps.common.test_utils import user_strategy
 
 from .utils import add_token
 
+from ..choices import KANBAN
 from ..models import Project
 from ..serializers import ProjectSerializer
 from ..test_factories import ProjectFactory
@@ -33,7 +34,7 @@ class ProjectTestCase(TestCase):
         self.url = reverse('projects-list')
 
     def test_create_project(self):
-        project = ProjectFactory()
+        project = ProjectFactory(board_type=KANBAN)
         projects_before = Project.objects.count()
         add_token(self.client, self.jwt)
 
@@ -91,7 +92,7 @@ class ProjectTestCase(TestCase):
         return reverse('projects-detail', kwargs={'pk': pk})
 
     def test_project_delete(self):
-        project = ProjectFactory()
+        project = ProjectFactory(board_type=KANBAN)
 
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
         response = self.client.delete(self._detail_url(project.pk))
@@ -101,8 +102,7 @@ class ProjectTestCase(TestCase):
     def test_project_update_patch(self):
         project = ProjectFactory()
         name = Faker().word()
-
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+        add_token(self.client, self.jwt)
 
         response = self.client.patch(self._detail_url(project.pk), {'name': name}, format='json')
 
@@ -113,10 +113,9 @@ class ProjectTestCase(TestCase):
         assert project.name == name
 
     def test_project_update_put(self):
-        project = ProjectFactory()
+        project = ProjectFactory(board_type=KANBAN)
         name = Faker().word()
-
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
+        add_token(self.client, self.jwt)
 
         data = ProjectSerializer(project).data
         data['name'] = name
@@ -128,4 +127,14 @@ class ProjectTestCase(TestCase):
         project.refresh_from_db()
 
         assert project.name == name
+
+    def test_retrieve_project(self):
+        project = ProjectFactory(board_type=KANBAN)
+        add_token(self.client, self.jwt)
+
+        response = self.client.get(self._detail_url(project.pk))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert 'sprints' in response.data
+        assert 'columns' in response.data
 
