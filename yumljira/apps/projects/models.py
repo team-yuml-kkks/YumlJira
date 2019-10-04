@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext as _
 
 from model_utils.models import TimeStampedModel
@@ -61,24 +61,28 @@ class Project(TimeStampedModel):
             project=self,
             number_in_board=1,
             should_show=False,
+            removable=False,
         )
 
         Column.objects.create(
             title=second_column_title,
             project=self,
             number_in_board=2,
+            removable=False,
         )
 
         Column.objects.create(
             title=IN_PROGRESS,
             project=self,
             number_in_board=3,
+            removable=False,
         )
 
         Column.objects.create(
             title=DONE,
             project=self,
             number_in_board=4,
+            removable=False,
         )
 
 
@@ -98,8 +102,55 @@ class Column(models.Model):
     should_show = models.BooleanField(default=True)
     """Determinates if column should be display in board."""
 
-    class Meta:
-        unique_together = ['project', 'number_in_board']
+    removable = models.BooleanField(default=True)
+    """Describes if column may be removed."""
+
+    @classmethod
+    @transaction.atomic
+    def update_board_numbers(cls, number, action, project):
+        """
+        Increase or decrease `number_in_board` field.
+        Used when column is created or deleted.
+
+        Args:
+            number(int) - requested `number_in_board`.
+        """
+        if action == 'create':
+            cls.objects.filter(number_in_board__gte=number, project=project) \
+                .update(number_in_board=models.F('number_in_board') + 1)
+
+        elif action == 'destroy':
+            cls.objects.filter(number_in_board__gte=number, project=project) \
+                .update(number_in_board=models.F('number_in_board') - 1)
+
+    @classmethod
+    @transaction.atomic
+    def update_board_numbers_exist(cls, number, old_instance):
+        old_number = old_instance.number_in_board
+        project = old_instance.project
+
+        columns = project.columns.all().order_by('number_in_board') \
+            .values_list('number_in_board', flat=True)
+
+        last_number = columns.last()
+
+        if number == old_number:
+            return
+
+        if number > last_number:
+            return
+
+        if number > old_number:
+            cls.objects.filter(
+                models.Q(number_in_board__gt=old_number)
+                | models.Q(number_in_board__lte=number)
+            ).update(number_in_board=models.F('number_in_board') - 1)
+
+        else:
+            cls.objects.filter(
+                models.Q(number_in_board__lt=old_number)
+                | models.Q(number_in_board__gte=number)
+            ).update(number_in_board=models.F('number_in_board') + 1)
 
 
 class Task(TimeStampedModel):

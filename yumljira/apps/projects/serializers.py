@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 
 from .choices import *
 from .models import *
-
+from .validators import validate_number_in_board
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,14 +46,43 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class ColumnSerializer(serializers.ModelSerializer):
-    tasks = TaskSerializer(many=True, read_only=True)
-
     class Meta:
         model = Column
-        fields = ('pk', 'title', 'number_in_board', 'should_show', 'project', 'tasks')
+        fields = ('pk', 'title', 'number_in_board', 'should_show', 'project', 'removable')
         extra_kwargs = {
-            'project': {'write_only': True}
+            'project': {'write_only': True},
+            'removable': {'read_only': True},
+            'should_show': {'read_only': True},
         }
+
+    def validate_number_in_board(self, number):
+        if self.instance:
+            valid, error_msg = validate_number_in_board(
+                number, self.instance.project, self.instance.number_in_board)
+
+            if not valid:
+                raise ValidationError({'number_in_board': [error_msg]})
+
+        return number
+
+    def validate(self, data):
+        number = data.get('number_in_board')
+        project = data.get('project')
+
+        if number is not None and project:
+            valid, error_msg = validate_number_in_board(number, project)
+
+            if not valid:
+                raise ValidationError({'number_in_board': [error_msg]})
+
+        return data
+
+
+class ColumnSerializerTasks(ColumnSerializer):
+    tasks = TaskSerializer(many=True, read_only=True)
+
+    class Meta(ColumnSerializer.Meta):
+        ColumnSerializer.Meta.fields += ('tasks',)
 
 
 class SprintSerializer(serializers.ModelSerializer):
@@ -85,7 +114,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class ProjectDetailSerializer(ProjectSerializer):
     sprints = SprintSerializer(many=True, read_only=True)
-    columns = ColumnSerializer(many=True, read_only=True)
+    columns = ColumnSerializerTasks(many=True, read_only=True)
 
     class Meta:
         model = Project
