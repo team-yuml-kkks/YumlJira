@@ -20,7 +20,7 @@ class ProjectViewset(viewsets.ModelViewSet):
     model = Project
     permission_classes = [IsAuthenticated]
     queryset = Project.objects.all().order_by('id') \
-        .prefetch_related('tasks', 'sprints')
+        .prefetch_related('sprints', 'columns', 'columns__tasks')
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -43,7 +43,7 @@ class TaskViewset(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated]
     queryset = Task.objects.all().order_by('id') \
-        .select_related('project', 'story') \
+        .select_related('column', 'story') \
         .prefetch_related('time_logs')
     filter_backends = [DjangoFilterBackend]
     filterset_class = TaskFilter
@@ -76,7 +76,7 @@ class CommentViewset(viewsets.ModelViewSet):
     model = Comment
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Comment.objects.all().select_related('task', 'owner')
+    queryset = Comment.objects.all().order_by('-created').select_related('task', 'owner')
     filter_backends = [DjangoFilterBackend]
     fiterset_class = CommentFilter
 

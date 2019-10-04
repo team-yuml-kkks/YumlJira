@@ -106,8 +106,6 @@ class Task(TimeStampedModel):
     title = models.CharField(_('Title'), max_length=255)
     description = models.TextField(_('Description'), null=True, blank=True)
 
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
-
     priority = models.CharField(_('Task priority'), max_length=40,
         choices=PRIORITIES, default=MEDIUM)
 
@@ -124,7 +122,7 @@ class Task(TimeStampedModel):
         related_name="connected_tasks", on_delete=models.CASCADE)
     """Describes if task is assigned to story or not."""
 
-    column = models.PositiveSmallIntegerField()
+    column = models.ForeignKey(Column, on_delete=models.PROTECT, related_name='tasks')
 
     @property
     def time_logged(self):

@@ -18,7 +18,7 @@ from yumljira.apps.common.test_utils import user_strategy
 from .utils import add_token
 
 from ..choices import KANBAN, SCRUM, SELECTED_FOR_DEV, TO_DO
-from ..models import Project
+from ..models import Column, Project
 from ..serializers import ProjectSerializer, TaskSerializer
 from ..test_factories import ColumnFactory, ProjectFactory, TaskFactory
 
@@ -146,17 +146,18 @@ class ColumnValidationTestCase(HTestCase):
 
     @given(integers(min_value=1, max_value=4))
     def test_column_exist(self, number):
-        task = TaskFactory(column=number, project=self.project)
+        column = self.project.columns.filter(number_in_board=number).first()
+        task = TaskFactory(column=column)
         data = TaskSerializer(task).data
 
         response = self.api_client.post(self.tasks_url, data, format='json')
 
         assert response.status_code == status.HTTP_201_CREATED
 
-    @given(integers(min_value=5, max_value=100))
-    def test_column_not_exist(self, number):
-        task = TaskFactory(column=number, project=self.project)
+    def test_column_not_exist(self):
+        task = TaskFactory()
         data = TaskSerializer(task).data
+        data['column'] = task.column.pk + 1
 
         response = self.api_client.post(self.tasks_url, data, format='json')
 
@@ -167,27 +168,28 @@ class ColumnValidationTestCase(HTestCase):
 
     @given(integers(min_value=1, max_value=4))
     def test_update_task_column_exist(self, number):
-        task = TaskFactory(column=1, project=self.project)
+        column = self.project.columns.filter(number_in_board=number).first()
+        task = TaskFactory(column=column)
 
         response = self.api_client.patch(self._detail_url(task.pk),
-            {'column': number}, format='json')
+            {'column': column.pk}, format='json')
 
         assert response.status_code == status.HTTP_200_OK
 
         task.refresh_from_db()
 
-        assert task.column == number
+        assert task.column.pk == column.pk
 
-    @given(integers(min_value=5, max_value=100))
-    def test_update_task_column_not_exist(self, number):
-        task = TaskFactory(column=1, project=self.project)
+    def test_update_task_column_not_exist(self):
+        task = TaskFactory()
+        column_pk = task.column.pk + 1
 
         response = self.api_client.patch(self._detail_url(task.pk),
-            {'column': number}, format='json')
+            {'column': column_pk}, format='json')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
         task.refresh_from_db()
 
-        assert task.column == 1
+        assert task.column.pk is not column_pk
 

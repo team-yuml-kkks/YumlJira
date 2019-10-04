@@ -136,6 +136,5 @@ class ProjectTestCase(TestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert 'sprints' in response.data
-        assert 'tasks' in response.data
         assert 'columns' in response.data
 
