@@ -36,8 +36,6 @@ class TaskFactory(Factory):
     title = factory.Faker('sentence')
     description = factory.Faker('sentence')
 
-    project = factory.SubFactory(ProjectFactory)
-
     priority = fuzzy.FuzzyChoice(PRIORITIES_KEYS)
 
     created_by = factory.SubFactory(UserFactory)
@@ -46,7 +44,7 @@ class TaskFactory(Factory):
     task_type = fuzzy.FuzzyChoice(TASK_TYPES_KEYS)
     story = None
 
-    column = factory.Faker('pyint')
+    column = factory.SubFactory(ColumnFactory)
 
 
 class TimeLogFactory(Factory):

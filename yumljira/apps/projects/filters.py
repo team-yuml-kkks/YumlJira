@@ -9,7 +9,7 @@ class TimeLogFilter(filters.FilterSet):
 
     class Meta:
         model = TimeLog
-        fields = ['task', 'user', 'task__project', 'date_after', 'date_before']
+        fields = ['user', 'date_after', 'date_before', 'task__column__project', 'task']
 
 
 class CommentFilter(filters.FilterSet):
@@ -24,5 +24,5 @@ class CommentFilter(filters.FilterSet):
 class TaskFilter(filters.FilterSet):
     class Meta:
         model = Task
-        fields = ['project', 'assigned_to', 'story', 'priority', 'task_type']
+        fields = ['assigned_to', 'story', 'priority', 'task_type', 'column', 'column__project']
 
