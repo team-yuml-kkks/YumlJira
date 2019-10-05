@@ -1,5 +1,9 @@
 // Store all getters used in project
 export default {
+    /**
+     * Return true/false for authorization process.
+     * @params {string} token.
+     */
     authorizedGrant: ({ token }) => !!token,
 
     getFormLoginErrors: ({ error_msg: { password, non_field_errors } = {} }) => {
