@@ -34,6 +34,37 @@ export default {
      * @param {object} results
      */
     projects(state, { results }) {
-        state.projects_list = results;
-    }
+        state.projectsList = results;
+    },
+
+    setProjectDetail(state, { data }) {
+        state.projectDetail = data;
+    },
+
+    /**
+     * Clear all data of project.
+     */
+    clearProject(state) {
+        state.projectsList = [];
+        state.projectDetail = [];
+    },
+
+    /**
+     * Clear data only of selected project details.
+     */
+    clearProjectDetail(state) {
+        state.projectDetail = {};
+    },
+
+    /**
+     * Set all columns title to stages array,
+     * for vue-kanban component.
+     */
+    setProjectDetailColumn(state, data) {
+        state.stages = data;
+    },
+
+    setTasks(state, data) {
+        state.tasks = data;
+    },
 }; 

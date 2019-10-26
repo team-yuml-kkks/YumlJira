@@ -9,5 +9,14 @@ export default {
     error_msg: [],
 
     //Array to store all user project.
-    projects_list: [],
+    projectsList: [],
+    
+    //Store all project details
+    projectDetail: {},
+
+    projectColumnsNames: [],
+
+    stages: [],
+
+    tasks: [],
 }

@@ -26,5 +26,9 @@ export default {
      * Get all projects list of loged user.
      * @type { list } project_list.
      */
-    getProjects: ( { projects_list = [] }) => projects_list,
+    getProjects: ( { projectsList = [] }) => projectsList,
+
+    getProjectDetail: ( { projectDetail: { columns } = {} }) => columns,
+
+    getStages: ( { stages = [] }) => stages,
 }

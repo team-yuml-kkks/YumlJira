@@ -6,6 +6,7 @@
                     <h1>Project list</h1>
                     <ErrorMessages
                         :message="error_msg"/>
+                    <button @click="clearSelectedProjectDetail()">Clear</button>
                 </div>
             </div>
             <div class="columns">
@@ -13,7 +14,8 @@
                     <div class="projects-list">
                         <ul id="example-1">
                             <li v-for="project in getProjects" :key="project.pk">
-                                {{ project.name }}
+                                <a type="button" class="button project-btn"
+                                    @click="selectProjectDetails(project.pk)">{{ project.name }}</a>
                             </li>
                         </ul>
                     </div>
@@ -23,16 +25,12 @@
                     </div>
                 </div>
                 <div class="column">
-                    <kanban-board :stages="stages" :blocks="blocks" @update-block="updateBlock">
-                        <div v-for="block in blocks" :slot="block.id" :key="block.id">
-                            <div>
-                                <strong>id:</strong> {{ block.id }}
-                            </div>
-                            <div>
-                                {{ block.title }}
-                            </div>
-                        </div>
-                    </kanban-board>
+                    <template v-if="getProjectDetail">
+                        <Board/>
+                    </template>
+                    <template v-else>
+                        <h1>some info</h1>
+                    </template>
                 </div>
             </div>
         </div>
@@ -42,7 +40,9 @@
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
+import Board from '../components/Board.vue';
 import ErrorMessages from '../components/ErrorMessages.vue';
+
 export default {
     name: 'ProjectList',
     // TODO All shit of vue-kanban move to store.
@@ -60,12 +60,12 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['authorizedGrant', 'getProjects']),
-        ...mapState(['error_msg']),
+        ...mapGetters(['authorizedGrant', 'getProjects', 'getProjectDetail']),
+        ...mapState(['error_msg', 'projectDetail']),
     },
 
     methods: {
-        ...mapActions(['userLogout', 'projectsList']),
+        ...mapActions(['userLogout', 'projectsList', 'selectProjectDetails', 'clearSelectedProjectDetail',]),
 
         updateBlock(id, status) {
             this.blocks.find(b => b.id === Number(id)).status = status;
@@ -73,6 +73,7 @@ export default {
     },
 
     components: {
+        Board,
         ErrorMessages,
     },
 
