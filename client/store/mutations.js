@@ -27,5 +27,13 @@ export default {
 
     clearErrors(state) {
         state.error_msg = {};
+    },
+
+    /**
+     * Add to state all projects from api.
+     * @param {object} results
+     */
+    projects(state, { results }) {
+        state.projects_list = results;
     }
 }; 

@@ -65,7 +65,28 @@ export default {
                 data
             } } = error;
 
-            commit('setError', { data })
+            commit('setError', { data });
         });
     },
+
+    /**
+     * Gets all projects to loged user.
+     * Projects are filtered by add pk of user.
+     * Action gets user pk from local state.
+     */
+    projectsList({ state: { pk } = undefined , commit }) {
+        axios.get('/projects/?created_by='+pk)
+        .then((response) => {
+            const { data: { results } = {} } = response;
+            commit('projects', { results });
+        })
+        .catch((error) => {
+            //TODO add handler for error response.
+            const { response: {
+                data
+            } } = error;
+
+            commit('setError', { data });
+        });
+    }
 }

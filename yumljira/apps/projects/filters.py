@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from .models import Comment, Task, TimeLog
+from .models import Comment, Project, Task, TimeLog
 
 
 class TimeLogFilter(filters.FilterSet):
@@ -26,3 +26,11 @@ class TaskFilter(filters.FilterSet):
         model = Task
         fields = ['assigned_to', 'story', 'priority', 'task_type', 'column', 'column__project']
 
+
+class ProjectFilter(filters.FilterSet):
+    key = filters.CharFilter(lookup_expr='icontains')
+    name = filters.CharFilter(lookup_expr='icontains')
+
+    class Meta:
+        model = Project
+        fields = ['created_by', 'key', 'board_type', 'name']

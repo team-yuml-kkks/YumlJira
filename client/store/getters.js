@@ -21,4 +21,10 @@ export default {
             avatar: `${avatar}`,
         };
     },
+
+    /**
+     * Get all projects list of loged user.
+     * @type { list } project_list.
+     */
+    getProjects: ( { projects_list = [] }) => projects_list,
 }
