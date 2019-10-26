@@ -1,26 +1,41 @@
 <template>
     <div id="ProjectList">
-        <h1>Project list</h1>
-        <ErrorMessages
-            :message="error_msg"/>
-        <ul id="example-1">
-            <li v-for="project in getProjects" :key="project.pk">
-                {{ project.name }}
-            </li>
-        </ul>
-        <button class="button is-primary is-pulled-right"
-            @click="userLogout">Logout</button>
-
-        <kanban-board :stages="stages" :blocks="blocks" @update-block="updateBlock">
-            <div v-for="block in blocks" :slot="block.id" :key="block.id">
-                <div>
-                    <strong>id:</strong> {{ block.id }}
-                </div>
-                <div>
-                    {{ block.title }}
+        <div class="container is-fluid">
+            <div class="columns">
+                <div class="column">
+                    <h1>Project list</h1>
+                    <ErrorMessages
+                        :message="error_msg"/>
                 </div>
             </div>
-        </kanban-board>
+            <div class="columns">
+                <div class="column is-one-fifth">
+                    <div class="projects-list">
+                        <ul id="example-1">
+                            <li v-for="project in getProjects" :key="project.pk">
+                                {{ project.name }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <button class="button is-primary"
+                            @click="userLogout">Logout</button>
+                    </div>
+                </div>
+                <div class="column">
+                    <kanban-board :stages="stages" :blocks="blocks" @update-block="updateBlock">
+                        <div v-for="block in blocks" :slot="block.id" :key="block.id">
+                            <div>
+                                <strong>id:</strong> {{ block.id }}
+                            </div>
+                            <div>
+                                {{ block.title }}
+                            </div>
+                        </div>
+                    </kanban-board>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
