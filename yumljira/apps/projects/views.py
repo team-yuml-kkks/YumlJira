@@ -23,6 +23,8 @@ class ProjectViewset(viewsets.ModelViewSet):
     queryset = Project.objects.all().order_by('id') \
         .prefetch_related('sprints', 'columns', 'columns__tasks') \
         .prefetch_related('columns__tasks__comments')
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProjectFilter
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
