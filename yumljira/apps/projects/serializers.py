@@ -13,6 +13,9 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('pk', 'content', 'owner', 'task', 'created', 'modified')
+        extra_kwargs = {
+            'owner': {'required': False},
+        }
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -29,6 +32,7 @@ class TaskSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'created': {'read_only': True},
             'modified': {'read_only': True},
+            'created_by': {'required': False},
         }
 
     def validate(self, data):
@@ -98,6 +102,9 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('pk', 'name', 'created_by', 'key', 'board_type', 'sprint_name')
+        extra_kwargs = {
+            'created_by': {'required': False},
+        }
 
     def validate(self, data):
         sprint_name = data.get('sprint_name', None)
@@ -120,6 +127,9 @@ class ProjectDetailSerializer(ProjectSerializer):
         model = Project
         fields = ('pk', 'name', 'created_by', 'key', 'board_type',
             'sprint_name', 'sprints', 'columns')
+        extra_kwargs = {
+            'created_by': {'required': False},
+        }
 
 
 class TimeLogSerializer(serializers.ModelSerializer):
@@ -128,6 +138,9 @@ class TimeLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeLog
         fields = ('pk', 'user', 'task', 'date', 'time_logged')
+        extra_kwargs = {
+            'user': {'required': False},
+        }
 
     def validate_task(self, task):
         if not task:
