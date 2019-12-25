@@ -27,5 +27,44 @@ export default {
 
     clearErrors(state) {
         state.error_msg = {};
-    }
+    },
+
+    /**
+     * Add to state all projects from api.
+     * @param {object} results
+     */
+    projects(state, { results }) {
+        state.projectsList = results;
+    },
+
+    setProjectDetail(state, { data }) {
+        state.projectDetail = data;
+    },
+
+    /**
+     * Clear all data of project.
+     */
+    clearProject(state) {
+        state.projectsList = [];
+        state.projectDetail = [];
+    },
+
+    /**
+     * Clear data only of selected project details.
+     */
+    clearProjectDetail(state) {
+        state.projectDetail = {};
+    },
+
+    /**
+     * Set all columns title to stages array,
+     * for vue-kanban component.
+     */
+    setProjectDetailColumn(state, data) {
+        state.stages = data;
+    },
+
+    setTasks(state, data) {
+        state.tasks = data;
+    },
 }; 

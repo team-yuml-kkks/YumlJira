@@ -5,5 +5,18 @@ export default {
     email: undefined,
     pk: undefined,
 
-    error_msg: {},
+    //Array to store error messages responed from api.
+    error_msg: [],
+
+    //Array to store all user project.
+    projectsList: [],
+    
+    //Store all project details
+    projectDetail: {},
+
+    projectColumnsNames: [],
+
+    stages: [],
+
+    tasks: [],
 }

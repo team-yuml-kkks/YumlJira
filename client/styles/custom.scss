@@ -1,5 +1,18 @@
 // Place all cutom styles.
 
+html, body, .container{
+    min-height: 100vh;
+}
+
 #Register {
     padding: 15%;
+}
+
+.footer-column {
+    position: absolute;
+    bottom: 0;
+}
+
+.project-btn {
+    width: 100%;
 }
